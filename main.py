@@ -5,7 +5,7 @@ import keras
 
 def load_model():
     model_path = "Model"
-    model_name = "model1"
+    model_name = "model"
     json_file = open(model_path + "/" + model_name + ".json", "r")
     loaded_model_json = json_file.read()
     json_file.close()
@@ -28,11 +28,21 @@ def main():
         _, frame = cap.read()
 
         cv2.imshow("origin image", frame)
+        
+        
 
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+
+        crop_size = (125, 125)
+        gfs = (gray_frame.shape[0] >> 1, gray_frame.shape[1] >> 1)
+        #print(gfs)
+        gray_frame = gray_frame[gfs[0] - crop_size[0]: gfs[0] + crop_size[0], gfs[1] - crop_size[1]: gfs[1] + crop_size[1]]
+        cv2.imshow("cropped gray image", gray_frame)
+
         gray_frame = gray_frame / 255
         gray_frame = cv2.resize(gray_frame, (64, 64))
-        _, binary_frame = cv2.threshold(gray_frame, 0.5, 1, cv2.THRESH_BINARY)
+        binary_frame = gray_frame
+        #_, binary_frame = cv2.threshold(gray_frame, 0.5, 1, cv2.THRESH_BINARY)
         # /binary_frame = cv2.resize(binary_frame, (64, 64))
         cv2.imshow("predict image", binary_frame)
         binary_frame = binary_frame.reshape(1, 64, 64)
